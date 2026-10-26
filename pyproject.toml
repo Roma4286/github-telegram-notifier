@@ -4,7 +4,12 @@ version = "0.1.0"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "alembic>=1.20.1",
+    "fastapi>=0.162.0",
+    "pydantic>=2.14.1",
     "ruff>=0.17.2",
+    "sqlalchemy>=2.1.6",
+    "telebot>=0.0.5",
 ]
 
 [build-system]
