@@ -1,0 +1,21 @@
+name: "github_telegram_notifier"
+
+services:
+  db:
+    image: postgres:17.0
+    restart: no
+    container_name: postgres_for_github_telegram_notifier
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-github_telegram_notifier}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - '127.0.0.1:${POSTGRES_PORT:-5432}:5432'
+    healthcheck:
+      test: pg_isready -U $${POSTGRES_USER}
+      interval: 5s
+
+volumes:
+  pgdata:
