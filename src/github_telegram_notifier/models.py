@@ -6,7 +6,7 @@ from datetime import datetime
 from sqlalchemy import Enum, ForeignKey, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
-from .security import hash_password, verify_password
+from .security import verify_password
 
 
 class Base(DeclarativeBase):
@@ -20,11 +20,6 @@ class UserRole(enum.Enum):
 
 class User(Base):
     __tablename__ = "users"
-
-    def __init__(self, username: str, password: str, role: UserRole = UserRole.USER):
-        self.username = username
-        self.password_hash = hash_password(password)
-        self.role = role
 
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(unique=True)
@@ -43,8 +38,8 @@ class User(Base):
         cascade="all, delete-orphan",
     )
 
-    def check_password(self, password: str) -> bool:
-        return verify_password(password, self.password_hash)
+    async def check_password(self, password: str) -> bool:
+        return await verify_password(password, self.password_hash)
 
 
 class Telegram_chat(Base):
