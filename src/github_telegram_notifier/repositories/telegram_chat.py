@@ -9,15 +9,17 @@ from .base import BaseRepository
 class TelegramChatRepository(BaseRepository[Telegram_chat]):
     model = Telegram_chat
 
-    def create(
+    async def create(
         self, *, user_id: int, chat_id: int, title: str | None = None
     ) -> Telegram_chat:
-        return self.add(Telegram_chat(user_id=user_id, chat_id=chat_id, title=title))
+        return await self.add(
+            Telegram_chat(user_id=user_id, chat_id=chat_id, title=title)
+        )
 
-    def get_by_chat_id(self, chat_id: int) -> Sequence[Telegram_chat]:
+    async def get_by_chat_id(self, chat_id: int) -> Sequence[Telegram_chat]:
         stmt = select(Telegram_chat).where(Telegram_chat.chat_id == chat_id)
-        return self._all(stmt)
+        return (await self.session.scalars(stmt)).all()
 
-    def get_by_user(self, user_id: int) -> Sequence[Telegram_chat]:
+    async def get_by_user(self, user_id: int) -> Sequence[Telegram_chat]:
         stmt = select(Telegram_chat).where(Telegram_chat.user_id == user_id)
-        return self._all(stmt)
+        return (await self.session.scalars(stmt)).all()

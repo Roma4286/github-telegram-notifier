@@ -9,10 +9,10 @@ from .base import BaseRepository
 class SubscribeRepository(BaseRepository[Subscribe]):
     model = Subscribe
 
-    def create(
+    async def create(
         self, *, telegram_chat_id: int, github_repository_id: int, title: str
     ) -> Subscribe:
-        return self.add(
+        return await self.add(
             Subscribe(
                 telegram_chat_id=telegram_chat_id,
                 github_repository_id=github_repository_id,
@@ -20,17 +20,19 @@ class SubscribeRepository(BaseRepository[Subscribe]):
             )
         )
 
-    def get_by_ids(
+    async def get_by_ids(
         self, *, telegram_chat_id: int, github_repository_id: int
     ) -> Subscribe | None:
-        return self.get((telegram_chat_id, github_repository_id))
+        return await self.get((telegram_chat_id, github_repository_id))
 
-    def get_by_chat(self, *, telegram_chat_id: int) -> Sequence[Subscribe]:
+    async def get_by_chat(self, *, telegram_chat_id: int) -> Sequence[Subscribe]:
         stmt = select(Subscribe).where(Subscribe.telegram_chat_id == telegram_chat_id)
-        return self._all(stmt)
+        return (await self.session.scalars(stmt)).all()
 
-    def get_by_repository(self, *, github_repository_id: int) -> Sequence[Subscribe]:
+    async def get_by_repository(
+        self, *, github_repository_id: int
+    ) -> Sequence[Subscribe]:
         stmt = select(Subscribe).where(
             Subscribe.github_repository_id == github_repository_id
         )
-        return self._all(stmt)
+        return (await self.session.scalars(stmt)).all()
