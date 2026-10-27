@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     postgres_user: str
     postgres_password: str
 
+    telegram_bot_token: str
+
     @property
     def pg_url(self) -> str:
         return (
